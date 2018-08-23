@@ -1,0 +1,61 @@
+import nltk
+import nltk.classify.util
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.classify import NaiveBayesClassifier
+import glob
+import re
+import random
+
+
+
+def md(words):
+    wd = [word for word in words if word not in stopwords.words("english")]
+    useful_words = [word for word in wd if word not in y]
+    dictionary = dict((word,True) for word in useful_words)
+    return dictionary
+    
+ham_list =[]
+file = glob.glob('ham/*')
+for mail in file:
+    with open(mail) as m:
+        words= word_tokenize(m.read())
+        ham_list.append((md(words), "ham"))
+
+
+
+spam_list =[]
+emails = glob.glob('spam/*')
+for mails in emails:
+    with open(mails) as t:
+        um = word_tokenize(re.split(r'[Ss]ubject',t.read(),re.M)[1])
+        spam_list.append((md(um), "spam"))
+        print(len(spam_list))
+        
+        
+combined_list = ham_list + spam_list
+ 
+random.shuffle(combined_list)
+
+
+training_part = int(len(combined_list) * .7)combined_list = ham_list + spam_list
+ 
+random.shuffle(combined_list)
+print(len(combined_list)*0.7)
+print(training_part)
+
+
+print(len(combined_list))
+ 
+training_set = combined_list[:training_part]
+ 
+test_set =  combined_list[training_part:]
+ 
+print (len(training_set))
+print (len(test_set))
+
+
+
+classifier = NaiveBayesClassifier.train(training_set)
+accuracy = nltk.classify.util.accuracy(classifier, test_set)
+print("Accuracy is: ", accuracy * 100)
