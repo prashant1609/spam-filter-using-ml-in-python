@@ -6,13 +6,16 @@ from nltk.classify import NaiveBayesClassifier
 import glob
 import re
 import random
+from nltk.stem import WordNetLemmatizer
+wl = wordnet_lemmatizer = WordNetLemmatizer()
 
 
 
 def md(words):
     wrds = [word for word in words if word not in stopwords.words("english")]
     alpa = [word for word in wrds if word.isalpha() == True]
-    usefulwrds = [word for word in alpa if len(word) != 1 ]
+    goodwrds = [word for word in alpa if len(word) != 1 ]
+    usefulwrds = [wl.lemmatize(word) for word in goodwrds]
     dictionary = dict((word,True) for word in usefulwrds)
     return dictionary
     
@@ -47,6 +50,4 @@ print("Accuracy is: ", accuracy * 100)
 
 
 
-classifier = NaiveBayesClassifier.train(training_set)
-accuracy = nltk.classify.util.accuracy(classifier, test_set)
-print("Accuracy is: ", accuracy * 100)
+
